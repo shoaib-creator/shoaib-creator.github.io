@@ -1,0 +1,823 @@
+/* OS Portfolio Styles */
+:root {
+    --primary-color: #0078d4;
+    --secondary-color: #005a9e;
+    --bg-color: #1e1e1e;
+    --window-bg: #2d2d2d;
+    --text-color: #ffffff;
+    --text-secondary: #b0b0b0;
+    --border-color: #3f3f3f;
+    --taskbar-height: 48px;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* Boot Screen */
+.boot-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeOut 1s forwards 3s;
+}
+
+.boot-content {
+    text-align: center;
+}
+
+.boot-logo i {
+    font-size: 80px;
+    color: var(--primary-color);
+    animation: pulse 2s infinite;
+}
+
+.boot-screen h1 {
+    font-size: 48px;
+    margin: 20px 0;
+    color: var(--primary-color);
+}
+
+.boot-loader {
+    width: 300px;
+    height: 4px;
+    background: #333;
+    margin: 30px auto;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.loader-bar {
+    width: 0;
+    height: 100%;
+    background: var(--primary-color);
+    animation: loading 3s forwards;
+}
+
+.boot-text {
+    color: #888;
+    font-size: 14px;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+@keyframes loading {
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Desktop */
+.desktop {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    opacity: 0;
+    animation: fadeIn 1s forwards 3.5s;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.wallpaper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: cover;
+}
+
+/* Desktop Icons */
+.desktop-icons {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: grid;
+    grid-gap: 20px;
+    z-index: 1;
+}
+
+.icon {
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.icon i {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 8px;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.icon span {
+    display: block;
+    font-size: 13px;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Windows */
+.window {
+    position: absolute;
+    background: var(--window-bg);
+    border-radius: 8px 8px 0 0;
+    box-shadow: var(--shadow);
+    min-width: 600px;
+    min-height: 400px;
+    max-width: 90vw;
+    max-height: calc(100vh - var(--taskbar-height) - 40px);
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.window.active {
+    display: flex;
+    z-index: 1000;
+}
+
+.window.minimized {
+    display: none;
+}
+
+.window.maximized {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: calc(100vh - var(--taskbar-height)) !important;
+    max-width: 100vw;
+    border-radius: 0;
+}
+
+.window-header {
+    background: var(--window-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    border-radius: 8px 8px 0 0;
+}
+
+.window-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.window-title i {
+    color: var(--primary-color);
+}
+
+.window-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.window-controls button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.window-controls button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.window-controls .close:hover {
+    background: #e81123;
+}
+
+.window-content {
+    flex: 1;
+    overflow: auto;
+    padding: 20px;
+}
+
+/* About Window */
+.about-content {
+    max-width: 800px;
+}
+
+.profile-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.profile-image i {
+    font-size: 120px;
+    color: var(--primary-color);
+}
+
+.profile-section h2 {
+    font-size: 32px;
+    margin: 20px 0 10px;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 18px;
+}
+
+.about-text {
+    line-height: 1.8;
+}
+
+.about-text h3 {
+    margin: 20px 0;
+    color: var(--primary-color);
+}
+
+.about-text p {
+    margin-bottom: 15px;
+    color: var(--text-secondary);
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.stat {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 120, 212, 0.1);
+    border-radius: 8px;
+}
+
+.stat-value {
+    font-size: 36px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    margin-top: 8px;
+}
+
+/* Skills Window */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.skill-category h3 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.skill-item {
+    margin-bottom: 20px;
+}
+
+.skill-item span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+}
+
+.skill-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.skill-progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transition: width 1s ease;
+}
+
+/* Projects Window */
+.projects-list {
+    display: grid;
+    gap: 20px;
+}
+
+.project-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.project-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+}
+
+.project-icon {
+    font-size: 48px;
+    color: var(--primary-color);
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.project-info h3 {
+    margin-bottom: 10px;
+}
+
+.project-info p {
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.project-tags span {
+    background: rgba(0, 120, 212, 0.2);
+    color: var(--primary-color);
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.project-links {
+    display: flex;
+    gap: 15px;
+}
+
+.project-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.project-links a:hover {
+    color: var(--secondary-color);
+}
+
+/* Experience Window */
+.experience-list {
+    display: grid;
+    gap: 30px;
+}
+
+.experience-item {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.exp-header h3 {
+    color: var(--text-color);
+}
+
+.exp-date {
+    color: var(--primary-color);
+    font-size: 14px;
+}
+
+.exp-company {
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+}
+
+.exp-duties {
+    list-style: none;
+    padding-left: 0;
+}
+
+.exp-duties li {
+    color: var(--text-secondary);
+    padding: 8px 0 8px 20px;
+    position: relative;
+}
+
+.exp-duties li::before {
+    content: '▹';
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+}
+
+/* Contact Window */
+.contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.contact-info-section h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.contact-info-section p {
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.contact-details {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.contact-detail {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--text-secondary);
+}
+
+.contact-detail i {
+    color: var(--primary-color);
+    font-size: 20px;
+}
+
+.contact-detail a {
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.contact-detail a:hover {
+    color: var(--primary-color);
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 120, 212, 0.2);
+    color: var(--primary-color);
+    border-radius: 50%;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.social-links a:hover {
+    background: var(--primary-color);
+    color: #fff;
+    transform: translateY(-3px);
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    color: var(--text-color);
+    border-radius: 4px;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.submit-btn {
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+}
+
+.submit-btn:hover {
+    background: var(--secondary-color);
+}
+
+/* Terminal Window */
+.terminal-window .window-header {
+    background: #1e1e1e;
+}
+
+.terminal-content {
+    background: #000;
+    color: #0f0;
+    font-family: 'Courier New', monospace;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.terminal-output {
+    margin-bottom: 10px;
+}
+
+.terminal-line {
+    margin: 5px 0;
+}
+
+.terminal-input-line {
+    display: flex;
+    align-items: center;
+}
+
+.terminal-prompt {
+    color: #0f0;
+    margin-right: 10px;
+}
+
+.terminal-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #0f0;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    outline: none;
+}
+
+/* Taskbar */
+.taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: var(--taskbar-height);
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    z-index: 10000;
+}
+
+.start-button {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    padding: 8px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.start-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.start-button i {
+    color: var(--primary-color);
+    font-size: 20px;
+}
+
+.taskbar-items {
+    flex: 1;
+    display: flex;
+    gap: 4px;
+    margin-left: 10px;
+}
+
+.taskbar-item {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 200px;
+}
+
+.taskbar-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.taskbar-item.active {
+    background: rgba(0, 120, 212, 0.3);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.system-tray {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.tray-item {
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.tray-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.clock {
+    font-size: 13px;
+}
+
+/* Start Menu */
+.start-menu-panel {
+    position: fixed;
+    bottom: var(--taskbar-height);
+    left: 10px;
+    width: 350px;
+    background: rgba(30, 30, 30, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 8px 8px 0 0;
+    box-shadow: var(--shadow);
+    display: none;
+    flex-direction: column;
+    z-index: 9999;
+}
+
+.start-menu-panel.active {
+    display: flex;
+}
+
+.start-menu-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-info i {
+    font-size: 48px;
+    color: var(--primary-color);
+}
+
+.start-menu-items {
+    padding: 10px;
+}
+
+.start-menu-item {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.start-menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.start-menu-item i {
+    color: var(--primary-color);
+    font-size: 20px;
+    width: 24px;
+}
+
+.start-menu-footer {
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    text-align: right;
+}
+
+.power-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.power-btn:hover {
+    background: #e81123;
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .window {
+        min-width: 90vw;
+        width: 90vw !important;
+        height: 70vh !important;
+    }
+
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .desktop-icons {
+        grid-template-columns: repeat(2, 100px);
+    }
+}
