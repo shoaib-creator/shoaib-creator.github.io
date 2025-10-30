@@ -175,7 +175,13 @@ function updateTaskbar() {
         if (window.classList.contains('active')) {
             item.classList.add('active');
         }
-        item.innerHTML = `<i class="${icon}"></i><span>${title}</span>`;
+        // Create icon and title elements safely
+        const iconElement = document.createElement('i');
+        iconElement.className = icon;
+        const titleElement = document.createElement('span');
+        titleElement.textContent = title;
+        item.appendChild(iconElement);
+        item.appendChild(titleElement);
         taskbarItems.appendChild(item);
     });
 }
@@ -298,10 +304,15 @@ LinkedIn: linkedin.com/in/shoaib-alam`;
 
             if (!input) return;
 
-            // Add command to output
+            // Add command to output safely
             const commandLine = document.createElement('div');
             commandLine.className = 'terminal-line';
-            commandLine.innerHTML = `<span class="terminal-prompt">shoaib@portfolio:~$</span> ${input}`;
+            const promptSpan = document.createElement('span');
+            promptSpan.className = 'terminal-prompt';
+            promptSpan.textContent = 'shoaib@portfolio:~$ ';
+            commandLine.appendChild(promptSpan);
+            const inputText = document.createTextNode(input);
+            commandLine.appendChild(inputText);
             terminalOutput.appendChild(commandLine);
 
             // Parse and execute command
