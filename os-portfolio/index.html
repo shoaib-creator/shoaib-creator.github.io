@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Shoaib Alam - OS-Style Portfolio">
+    <title>ShoaibOS - Portfolio</title>
+    <link rel="stylesheet" href="os-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Boot Screen -->
+    <div id="bootScreen" class="boot-screen">
+        <div class="boot-content">
+            <div class="boot-logo">
+                <i class="fas fa-laptop-code"></i>
+            </div>
+            <h1>ShoaibOS</h1>
+            <div class="boot-loader">
+                <div class="loader-bar"></div>
+            </div>
+            <p class="boot-text">Initializing portfolio system...</p>
+        </div>
+    </div>
+
+    <!-- Desktop -->
+    <div id="desktop" class="desktop">
+        <!-- Wallpaper -->
+        <div class="wallpaper"></div>
+
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <div class="icon" data-window="about">
+                <i class="fas fa-user"></i>
+                <span>About Me</span>
+            </div>
+            <div class="icon" data-window="skills">
+                <i class="fas fa-code"></i>
+                <span>Skills</span>
+            </div>
+            <div class="icon" data-window="projects">
+                <i class="fas fa-folder"></i>
+                <span>Projects</span>
+            </div>
+            <div class="icon" data-window="experience">
+                <i class="fas fa-briefcase"></i>
+                <span>Experience</span>
+            </div>
+            <div class="icon" data-window="contact">
+                <i class="fas fa-envelope"></i>
+                <span>Contact</span>
+            </div>
+            <div class="icon" data-window="terminal">
+                <i class="fas fa-terminal"></i>
+                <span>Terminal</span>
+            </div>
+        </div>
+
+        <!-- Windows -->
+        <!-- About Window -->
+        <div class="window" id="about-window" data-window="about">
+            <div class="window-header">
+                <div class="window-title">
+                    <i class="fas fa-user"></i>
+                    <span>About Me</span>
+                </div>
+                <div class="window-controls">
+                    <button class="minimize"><i class="fas fa-minus"></i></button>
+                    <button class="maximize"><i class="fas fa-expand"></i></button>
+                    <button class="close"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="about-content">
+                    <div class="profile-section">
+                        <div class="profile-image">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <h2>Shoaib Alam</h2>
+                        <p class="subtitle">Full Stack Developer & Software Engineer</p>
+                    </div>
+                    <div class="about-text">
+                        <h3>Hello! 👋</h3>
+                        <p>I'm a passionate software developer who loves creating innovative solutions and building exceptional digital experiences. My journey in tech has been driven by curiosity and a desire to solve real-world problems.</p>
+                        <p>With expertise spanning both frontend and backend technologies, I enjoy working on challenging projects that push the boundaries of what's possible.</p>
+                        <div class="stats">
+                            <div class="stat">
+                                <div class="stat-value">5+</div>
+                                <div class="stat-label">Years Experience</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">50+</div>
+                                <div class="stat-label">Projects Completed</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">100%</div>
+                                <div class="stat-label">Client Satisfaction</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Window -->
+        <div class="window" id="skills-window" data-window="skills">
+            <div class="window-header">
+                <div class="window-title">
+                    <i class="fas fa-code"></i>
+                    <span>Skills & Technologies</span>
+                </div>
+                <div class="window-controls">
+                    <button class="minimize"><i class="fas fa-minus"></i></button>
+                    <button class="maximize"><i class="fas fa-expand"></i></button>
+                    <button class="close"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h3><i class="fas fa-palette"></i> Frontend</h3>
+                        <div class="skill-item">
+                            <span>HTML/CSS/JavaScript</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 95%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>React & Next.js</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 90%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>Vue.js</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>TypeScript</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 88%"></div></div>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h3><i class="fas fa-server"></i> Backend</h3>
+                        <div class="skill-item">
+                            <span>Node.js & Express</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 92%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>Python & Django</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 87%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>RESTful APIs</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 93%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>GraphQL</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 80%"></div></div>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h3><i class="fas fa-database"></i> Database & Cloud</h3>
+                        <div class="skill-item">
+                            <span>MongoDB</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 90%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>PostgreSQL</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>AWS</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 82%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>Docker & Kubernetes</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 78%"></div></div>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h3><i class="fas fa-tools"></i> Tools & Others</h3>
+                        <div class="skill-item">
+                            <span>Git & GitHub</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 95%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>CI/CD</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 83%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>Testing (Jest, Pytest)</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 86%"></div></div>
+                        </div>
+                        <div class="skill-item">
+                            <span>Agile/Scrum</span>
+                            <div class="skill-bar"><div class="skill-progress" style="width: 88%"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Window -->
+        <div class="window" id="projects-window" data-window="projects">
+            <div class="window-header">
+                <div class="window-title">
+                    <i class="fas fa-folder"></i>
+                    <span>Projects</span>
+                </div>
+                <div class="window-controls">
+                    <button class="minimize"><i class="fas fa-minus"></i></button>
+                    <button class="maximize"><i class="fas fa-expand"></i></button>
+                    <button class="close"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="projects-list">
+                    <div class="project-item">
+                        <div class="project-icon"><i class="fas fa-shopping-cart"></i></div>
+                        <div class="project-info">
+                            <h3>E-Commerce Platform</h3>
+                            <p>Full-stack e-commerce solution with payment integration, inventory management, and analytics.</p>
+                            <div class="project-tags">
+                                <span>React</span>
+                                <span>Node.js</span>
+                                <span>MongoDB</span>
+                                <span>Stripe</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/shoaib-creator" target="_blank"><i class="fab fa-github"></i> Code</a>
+                                <a href="#"><i class="fas fa-external-link-alt"></i> Demo</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-item">
+                        <div class="project-icon"><i class="fas fa-tasks"></i></div>
+                        <div class="project-info">
+                            <h3>Task Management App</h3>
+                            <p>Collaborative task management with real-time updates and team productivity analytics.</p>
+                            <div class="project-tags">
+                                <span>Next.js</span>
+                                <span>TypeScript</span>
+                                <span>PostgreSQL</span>
+                                <span>Socket.io</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/shoaib-creator" target="_blank"><i class="fab fa-github"></i> Code</a>
+                                <a href="#"><i class="fas fa-external-link-alt"></i> Demo</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-item">
+                        <div class="project-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="project-info">
+                            <h3>Analytics Dashboard</h3>
+                            <p>Comprehensive data visualization dashboard with interactive charts and custom reports.</p>
+                            <div class="project-tags">
+                                <span>Vue.js</span>
+                                <span>Python</span>
+                                <span>Django</span>
+                                <span>D3.js</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/shoaib-creator" target="_blank"><i class="fab fa-github"></i> Code</a>
+                                <a href="#"><i class="fas fa-external-link-alt"></i> Demo</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-item">
+                        <div class="project-icon"><i class="fas fa-blog"></i></div>
+                        <div class="project-info">
+                            <h3>Blog Platform</h3>
+                            <p>Modern blogging platform with markdown support, SEO optimization, and content management.</p>
+                            <div class="project-tags">
+                                <span>React</span>
+                                <span>GraphQL</span>
+                                <span>Node.js</span>
+                                <span>MongoDB</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="https://github.com/shoaib-creator" target="_blank"><i class="fab fa-github"></i> Code</a>
+                                <a href="#"><i class="fas fa-external-link-alt"></i> Demo</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Experience Window -->
+        <div class="window" id="experience-window" data-window="experience">
+            <div class="window-header">
+                <div class="window-title">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Work Experience</span>
+                </div>
+                <div class="window-controls">
+                    <button class="minimize"><i class="fas fa-minus"></i></button>
+                    <button class="maximize"><i class="fas fa-expand"></i></button>
+                    <button class="close"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="experience-list">
+                    <div class="experience-item">
+                        <div class="exp-header">
+                            <h3>Senior Software Engineer</h3>
+                            <span class="exp-date">Jan 2022 - Present</span>
+                        </div>
+                        <p class="exp-company"><i class="fas fa-building"></i> Tech Company Inc.</p>
+                        <ul class="exp-duties">
+                            <li>Led development of microservices architecture serving 1M+ users</li>
+                            <li>Implemented CI/CD pipelines reducing deployment time by 60%</li>
+                            <li>Mentored junior developers and conducted code reviews</li>
+                            <li>Collaborated with cross-functional teams to deliver features</li>
+                        </ul>
+                    </div>
+                    <div class="experience-item">
+                        <div class="exp-header">
+                            <h3>Full Stack Developer</h3>
+                            <span class="exp-date">Jun 2020 - Dec 2021</span>
+                        </div>
+                        <p class="exp-company"><i class="fas fa-building"></i> Startup Solutions</p>
+                        <ul class="exp-duties">
+                            <li>Built responsive web applications using React and Node.js</li>
+                            <li>Developed RESTful APIs and integrated third-party services</li>
+                            <li>Optimized database queries improving performance by 40%</li>
+                            <li>Participated in agile development and sprint planning</li>
+                        </ul>
+                    </div>
+                    <div class="experience-item">
+                        <div class="exp-header">
+                            <h3>Junior Developer</h3>
+                            <span class="exp-date">Jan 2019 - May 2020</span>
+                        </div>
+                        <p class="exp-company"><i class="fas fa-building"></i> Digital Agency</p>
+                        <ul class="exp-duties">
+                            <li>Developed and maintained client websites and applications</li>
+                            <li>Worked with designers to implement pixel-perfect UI</li>
+                            <li>Fixed bugs and improved website performance</li>
+                            <li>Learned best practices in software development</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Window -->
+        <div class="window" id="contact-window" data-window="contact">
+            <div class="window-header">
+                <div class="window-title">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact Me</span>
+                </div>
+                <div class="window-controls">
+                    <button class="minimize"><i class="fas fa-minus"></i></button>
+                    <button class="maximize"><i class="fas fa-expand"></i></button>
+                    <button class="close"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="contact-layout">
+                    <div class="contact-info-section">
+                        <h3>Get In Touch</h3>
+                        <p>Feel free to reach out for collaborations or just a friendly hello!</p>
+                        <div class="contact-details">
+                            <div class="contact-detail">
+                                <i class="fas fa-envelope"></i>
+                                <a href="mailto:contact@shoaibalam.me">contact@shoaibalam.me</a>
+                            </div>
+                            <div class="contact-detail">
+                                <i class="fas fa-phone"></i>
+                                <a href="tel:+1234567890">+1 (234) 567-890</a>
+                            </div>
+                            <div class="contact-detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Your Location</span>
+                            </div>
+                        </div>
+                        <div class="social-links">
+                            <a href="https://github.com/shoaib-creator" target="_blank"><i class="fab fa-github"></i></a>
+                            <a href="https://linkedin.com/in/shoaib-alam" target="_blank"><i class="fab fa-linkedin"></i></a>
+                            <a href="https://twitter.com/shoaib_creator" target="_blank"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                    <form class="contact-form">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" placeholder="your.email@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea rows="5" placeholder="Your message here..." required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terminal Window -->
+        <div class="window terminal-window" id="terminal-window" data-window="terminal">
+            <div class="window-header">
+                <div class="window-title">
+                    <i class="fas fa-terminal"></i>
+                    <span>Terminal - shoaib@portfolio:~$</span>
+                </div>
+                <div class="window-controls">
+                    <button class="minimize"><i class="fas fa-minus"></i></button>
+                    <button class="maximize"><i class="fas fa-expand"></i></button>
+                    <button class="close"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="window-content terminal-content">
+                <div class="terminal-output" id="terminalOutput">
+                    <div class="terminal-line">ShoaibOS Terminal v1.0.0</div>
+                    <div class="terminal-line">Type 'help' for available commands</div>
+                    <div class="terminal-line">---</div>
+                </div>
+                <div class="terminal-input-line">
+                    <span class="terminal-prompt">shoaib@portfolio:~$</span>
+                    <input type="text" class="terminal-input" id="terminalInput" autocomplete="off">
+                </div>
+            </div>
+        </div>
+
+        <!-- Taskbar -->
+        <div class="taskbar">
+            <div class="start-menu">
+                <button class="start-button">
+                    <i class="fas fa-laptop-code"></i>
+                    <span>ShoaibOS</span>
+                </button>
+            </div>
+            <div class="taskbar-items" id="taskbarItems">
+                <!-- Dynamic taskbar items will appear here -->
+            </div>
+            <div class="system-tray">
+                <div class="tray-item">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <div class="tray-item">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <div class="tray-item clock" id="clock">
+                    00:00
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Menu -->
+        <div class="start-menu-panel" id="startMenuPanel">
+            <div class="start-menu-header">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Shoaib Alam</span>
+                </div>
+            </div>
+            <div class="start-menu-items">
+                <div class="start-menu-item" data-window="about">
+                    <i class="fas fa-user"></i>
+                    <span>About Me</span>
+                </div>
+                <div class="start-menu-item" data-window="skills">
+                    <i class="fas fa-code"></i>
+                    <span>Skills</span>
+                </div>
+                <div class="start-menu-item" data-window="projects">
+                    <i class="fas fa-folder"></i>
+                    <span>Projects</span>
+                </div>
+                <div class="start-menu-item" data-window="experience">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Experience</span>
+                </div>
+                <div class="start-menu-item" data-window="contact">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact</span>
+                </div>
+                <div class="start-menu-item" data-window="terminal">
+                    <i class="fas fa-terminal"></i>
+                    <span>Terminal</span>
+                </div>
+            </div>
+            <div class="start-menu-footer">
+                <button class="power-btn" title="Shutdown">
+                    <i class="fas fa-power-off"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="os-script.js"></script>
+</body>
+</html>
