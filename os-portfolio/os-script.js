@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeClock();
     initializeTerminal();
     initializeContactForm();
+    initializeKeyboardShortcuts();
+    initializeContextMenu();
+    initializeCalculator();
+    initializeSettings();
 });
 
 // Initialize windows
@@ -84,6 +88,7 @@ function makeWindowDraggable(window) {
     let currentY;
     let initialX;
     let initialY;
+    let snapIndicator = null;
 
     header.addEventListener('mousedown', (e) => {
         if (e.target.closest('.window-controls')) return;
@@ -105,10 +110,173 @@ function makeWindowDraggable(window) {
 
         window.style.left = `${currentX}px`;
         window.style.top = `${currentY}px`;
+
+        // Snap to edge preview
+        showSnapPreview(e, window);
     });
 
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
+    document.addEventListener('mouseup', (e) => {
+        if (isDragging) {
+            isDragging = false;
+            applySnapToEdge(e, window);
+            removeSnapPreview();
+        }
+    });
+
+    // Make window resizable
+    makeWindowResizable(window);
+}
+
+// Show snap preview
+function showSnapPreview(e, window) {
+    const screenWidth = window.parentElement.offsetWidth;
+    const screenHeight = window.parentElement.offsetHeight - 48;
+    const margin = 10;
+
+    if (!document.getElementById('snapIndicator')) {
+        const indicator = document.createElement('div');
+        indicator.id = 'snapIndicator';
+        indicator.style.cssText = `
+            position: absolute;
+            border: 2px solid var(--primary-color);
+            background: rgba(0, 120, 212, 0.1);
+            pointer-events: none;
+            z-index: 9998;
+            display: none;
+        `;
+        document.querySelector('.desktop').appendChild(indicator);
+    }
+
+    const indicator = document.getElementById('snapIndicator');
+
+    // Left edge
+    if (e.clientX < margin) {
+        indicator.style.display = 'block';
+        indicator.style.left = '0';
+        indicator.style.top = '0';
+        indicator.style.width = `${screenWidth / 2}px`;
+        indicator.style.height = `${screenHeight}px`;
+    }
+    // Right edge
+    else if (e.clientX > screenWidth - margin) {
+        indicator.style.display = 'block';
+        indicator.style.left = `${screenWidth / 2}px`;
+        indicator.style.top = '0';
+        indicator.style.width = `${screenWidth / 2}px`;
+        indicator.style.height = `${screenHeight}px`;
+    }
+    // Top edge (maximize)
+    else if (e.clientY < margin) {
+        indicator.style.display = 'block';
+        indicator.style.left = '0';
+        indicator.style.top = '0';
+        indicator.style.width = `${screenWidth}px`;
+        indicator.style.height = `${screenHeight}px`;
+    }
+    else {
+        indicator.style.display = 'none';
+    }
+}
+
+// Remove snap preview
+function removeSnapPreview() {
+    const indicator = document.getElementById('snapIndicator');
+    if (indicator) {
+        indicator.style.display = 'none';
+    }
+}
+
+// Apply snap to edge
+function applySnapToEdge(e, window) {
+    const screenWidth = window.parentElement.offsetWidth;
+    const screenHeight = window.parentElement.offsetHeight - 48;
+    const margin = 10;
+
+    window.classList.remove('snapped-left', 'snapped-right');
+
+    // Left edge
+    if (e.clientX < margin) {
+        window.style.left = '0';
+        window.style.top = '0';
+        window.style.width = `${screenWidth / 2}px`;
+        window.style.height = `${screenHeight}px`;
+        window.classList.add('snapped-left');
+    }
+    // Right edge
+    else if (e.clientX > screenWidth - margin) {
+        window.style.left = `${screenWidth / 2}px`;
+        window.style.top = '0';
+        window.style.width = `${screenWidth / 2}px`;
+        window.style.height = `${screenHeight}px`;
+        window.classList.add('snapped-right');
+    }
+    // Top edge (maximize)
+    else if (e.clientY < margin) {
+        window.classList.add('maximized');
+    }
+}
+
+// Make window resizable
+function makeWindowResizable(window) {
+    const resizers = ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'];
+    
+    resizers.forEach(direction => {
+        const resizer = document.createElement('div');
+        resizer.className = `resizer resizer-${direction}`;
+        window.appendChild(resizer);
+
+        let isResizing = false;
+        let startX, startY, startWidth, startHeight, startLeft, startTop;
+
+        resizer.addEventListener('mousedown', (e) => {
+            if (window.classList.contains('maximized')) return;
+            
+            e.stopPropagation();
+            isResizing = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startWidth = window.offsetWidth;
+            startHeight = window.offsetHeight;
+            startLeft = parseFloat(window.style.left) || 0;
+            startTop = parseFloat(window.style.top) || 0;
+
+            focusWindow(window);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+
+            // Horizontal resizing
+            if (direction.includes('e')) {
+                window.style.width = `${Math.max(400, startWidth + deltaX)}px`;
+            }
+            if (direction.includes('w')) {
+                const newWidth = Math.max(400, startWidth - deltaX);
+                if (newWidth >= 400) {
+                    window.style.width = `${newWidth}px`;
+                    window.style.left = `${startLeft + deltaX}px`;
+                }
+            }
+
+            // Vertical resizing
+            if (direction.includes('s')) {
+                window.style.height = `${Math.max(300, startHeight + deltaY)}px`;
+            }
+            if (direction.includes('n')) {
+                const newHeight = Math.max(300, startHeight - deltaY);
+                if (newHeight >= 300) {
+                    window.style.height = `${newHeight}px`;
+                    window.style.top = `${startTop + deltaY}px`;
+                }
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isResizing = false;
+        });
     });
 }
 
@@ -241,6 +409,8 @@ function initializeClock() {
 function initializeTerminal() {
     const terminalInput = document.getElementById('terminalInput');
     const terminalOutput = document.getElementById('terminalOutput');
+    let commandHistory = [];
+    let historyIndex = -1;
 
     const commands = {
         help: () => {
@@ -253,7 +423,12 @@ function initializeTerminal() {
   clear     - Clear terminal
   whoami    - Display current user
   date      - Show current date and time
-  echo      - Echo text back`;
+  echo      - Echo text back
+  ls        - List available sections
+  cat       - Display content of a section
+  neofetch  - Display system information
+  history   - Show command history
+  banner    - Display ASCII art banner`;
         },
         about: () => {
             return `Shoaib Alam
@@ -294,8 +469,111 @@ LinkedIn: linkedin.com/in/shoaib-alam`;
         },
         echo: (args) => {
             return args.join(' ');
+        },
+        ls: () => {
+            return `about.txt    skills.txt    projects.txt    experience.txt    contact.txt`;
+        },
+        cat: (args) => {
+            if (!args[0]) return 'Usage: cat <filename>';
+            const file = args[0].replace('.txt', '');
+            if (commands[file]) {
+                return commands[file]([]);
+            }
+            return `cat: ${args[0]}: No such file or directory`;
+        },
+        neofetch: () => {
+            return `
+     _______________        shoaib@portfolio
+    /               \\       OS: ShoaibOS v1.0
+   |   SHOAIB OS    |      Kernel: JavaScript ES6+
+   |   o       o    |      Uptime: ${getUptime()}
+   |      ___       |      Shell: Web Terminal
+    \\     \\_/      /       Terminal: ShoaibOS Terminal
+     \\___________/         CPU: Your Browser
+                            GPU: Canvas/WebGL
+                            Memory: ${getMemoryInfo()}`;
+        },
+        history: () => {
+            return commandHistory.length > 0 
+                ? commandHistory.map((cmd, i) => `${i + 1}  ${cmd}`).join('\n')
+                : 'No command history';
+        },
+        banner: () => {
+            return `
+  _____ _                 _ _        ___  _____ 
+ / ____| |               (_) |      / _ \\/ ____|
+| (___ | |__   ___   __ _ _| |__   | | | | (___  
+ \\___ \\| '_ \\ / _ \\ / _\` | | '_ \\  | | | |\\___ \\ 
+ ____) | | | | (_) | (_| | | |_) | | |_| |____) |
+|_____/|_| |_|\\___/ \\__,_|_|_.__/   \\___/|_____/ 
+                                                  
+        Welcome to Shoaib's OS Portfolio!
+        Type 'help' for available commands`;
         }
     };
+
+    // Helper functions for neofetch
+    function getUptime() {
+        const now = new Date().getTime();
+        const bootTime = window.bootTime || now;
+        const uptime = Math.floor((now - bootTime) / 1000);
+        const minutes = Math.floor(uptime / 60);
+        const seconds = uptime % 60;
+        return `${minutes}m ${seconds}s`;
+    }
+
+    function getMemoryInfo() {
+        if (performance.memory) {
+            const used = (performance.memory.usedJSHeapSize / 1048576).toFixed(2);
+            const total = (performance.memory.totalJSHeapSize / 1048576).toFixed(2);
+            return `${used}MB / ${total}MB`;
+        }
+        return 'N/A';
+    }
+
+    // Tab completion
+    terminalInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const input = terminalInput.value.trim();
+            const matches = Object.keys(commands).filter(cmd => cmd.startsWith(input));
+            
+            if (matches.length === 1) {
+                terminalInput.value = matches[0];
+            } else if (matches.length > 1) {
+                const outputLine = document.createElement('div');
+                outputLine.className = 'terminal-line';
+                outputLine.textContent = matches.join('  ');
+                terminalOutput.appendChild(outputLine);
+                scrollTerminal();
+            }
+        }
+        // Arrow up - previous command
+        else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (commandHistory.length > 0) {
+                if (historyIndex === -1) {
+                    historyIndex = commandHistory.length - 1;
+                } else if (historyIndex > 0) {
+                    historyIndex--;
+                }
+                terminalInput.value = commandHistory[historyIndex];
+            }
+        }
+        // Arrow down - next command
+        else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (historyIndex !== -1) {
+                historyIndex++;
+                if (historyIndex >= commandHistory.length) {
+                    historyIndex = -1;
+                    terminalInput.value = '';
+                } else {
+                    terminalInput.value = commandHistory[historyIndex];
+                }
+            }
+        }
+    });
 
     terminalInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -303,6 +581,10 @@ LinkedIn: linkedin.com/in/shoaib-alam`;
             terminalInput.value = '';
 
             if (!input) return;
+
+            // Add to history
+            commandHistory.push(input);
+            historyIndex = -1;
 
             // Add command to output safely
             const commandLine = document.createElement('div');
@@ -330,20 +612,28 @@ LinkedIn: linkedin.com/in/shoaib-alam`;
             if (output !== null) {
                 const outputLine = document.createElement('div');
                 outputLine.className = 'terminal-line';
+                outputLine.style.whiteSpace = 'pre-wrap';
                 outputLine.textContent = output;
                 terminalOutput.appendChild(outputLine);
             }
 
-            // Scroll to bottom
-            const terminalContent = terminalOutput.parentElement;
-            terminalContent.scrollTop = terminalContent.scrollHeight;
+            scrollTerminal();
         }
     });
+
+    // Scroll terminal to bottom
+    function scrollTerminal() {
+        const terminalContent = terminalOutput.parentElement;
+        terminalContent.scrollTop = terminalContent.scrollHeight;
+    }
 
     // Focus terminal input when terminal window is opened
     document.querySelector('[data-window="terminal"]').addEventListener('dblclick', () => {
         setTimeout(() => terminalInput.focus(), 100);
     });
+
+    // Store boot time
+    window.bootTime = new Date().getTime();
 }
 
 // Initialize contact form
@@ -433,6 +723,420 @@ function showNotification(message, type = 'info') {
 setTimeout(() => {
     openWindow('about');
 }, 4000);
+
+// Initialize keyboard shortcuts
+function initializeKeyboardShortcuts() {
+    let altTabOpen = false;
+    let currentTabIndex = 0;
+
+    document.addEventListener('keydown', (e) => {
+        // Alt + Tab - Window switcher
+        if (e.altKey && e.key === 'Tab') {
+            e.preventDefault();
+            
+            if (openWindows.size === 0) return;
+
+            if (!altTabOpen) {
+                altTabOpen = true;
+                showWindowSwitcher();
+            }
+
+            const windowsArray = Array.from(openWindows);
+            currentTabIndex = (currentTabIndex + 1) % windowsArray.length;
+            highlightSwitcherWindow(windowsArray[currentTabIndex]);
+        }
+        // Ctrl + W - Close active window
+        else if (e.ctrlKey && e.key === 'w') {
+            e.preventDefault();
+            if (activeWindow) {
+                const windowId = activeWindow.dataset.window;
+                activeWindow.classList.remove('active', 'minimized', 'maximized');
+                openWindows.delete(windowId);
+                updateTaskbar();
+            }
+        }
+        // Ctrl + Shift + T - Open terminal
+        else if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+            e.preventDefault();
+            openWindow('terminal');
+        }
+        // F11 - Toggle fullscreen for active window
+        else if (e.key === 'F11') {
+            e.preventDefault();
+            if (activeWindow) {
+                activeWindow.classList.toggle('maximized');
+            }
+        }
+        // Escape - Close start menu, window switcher
+        else if (e.key === 'Escape') {
+            document.getElementById('startMenuPanel').classList.remove('active');
+            hideWindowSwitcher();
+            altTabOpen = false;
+        }
+    });
+
+    document.addEventListener('keyup', (e) => {
+        if (e.key === 'Alt' && altTabOpen) {
+            altTabOpen = false;
+            const windowsArray = Array.from(openWindows);
+            if (windowsArray[currentTabIndex]) {
+                openWindow(windowsArray[currentTabIndex]);
+            }
+            hideWindowSwitcher();
+            currentTabIndex = 0;
+        }
+    });
+}
+
+// Show window switcher
+function showWindowSwitcher() {
+    let switcher = document.getElementById('windowSwitcher');
+    if (!switcher) {
+        switcher = document.createElement('div');
+        switcher.id = 'windowSwitcher';
+        switcher.className = 'window-switcher';
+        document.body.appendChild(switcher);
+    }
+
+    switcher.innerHTML = '';
+    switcher.style.display = 'flex';
+
+    openWindows.forEach(windowId => {
+        const window = document.getElementById(`${windowId}-window`);
+        const title = window.querySelector('.window-title span').textContent;
+        const icon = window.querySelector('.window-title i').className;
+
+        const item = document.createElement('div');
+        item.className = 'switcher-item';
+        item.dataset.window = windowId;
+        
+        const iconEl = document.createElement('i');
+        iconEl.className = icon;
+        const titleEl = document.createElement('span');
+        titleEl.textContent = title;
+        
+        item.appendChild(iconEl);
+        item.appendChild(titleEl);
+        switcher.appendChild(item);
+    });
+}
+
+// Highlight switcher window
+function highlightSwitcherWindow(windowId) {
+    const items = document.querySelectorAll('.switcher-item');
+    items.forEach(item => {
+        if (item.dataset.window === windowId) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
+
+// Hide window switcher
+function hideWindowSwitcher() {
+    const switcher = document.getElementById('windowSwitcher');
+    if (switcher) {
+        switcher.style.display = 'none';
+    }
+}
+
+// Initialize context menu
+function initializeContextMenu() {
+    const desktop = document.querySelector('.desktop');
+    let contextMenu = document.getElementById('contextMenu');
+
+    if (!contextMenu) {
+        contextMenu = document.createElement('div');
+        contextMenu.id = 'contextMenu';
+        contextMenu.className = 'context-menu';
+        contextMenu.innerHTML = `
+            <div class="context-menu-item" data-action="refresh">
+                <i class="fas fa-sync-alt"></i>
+                <span>Refresh</span>
+            </div>
+            <div class="context-menu-divider"></div>
+            <div class="context-menu-item" data-action="about">
+                <i class="fas fa-user"></i>
+                <span>About Me</span>
+            </div>
+            <div class="context-menu-item" data-action="terminal">
+                <i class="fas fa-terminal"></i>
+                <span>Open Terminal</span>
+            </div>
+            <div class="context-menu-divider"></div>
+            <div class="context-menu-item" data-action="settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+        `;
+        document.body.appendChild(contextMenu);
+    }
+
+    // Show context menu on right-click
+    desktop.addEventListener('contextmenu', (e) => {
+        if (e.target === desktop || e.target.classList.contains('wallpaper')) {
+            e.preventDefault();
+            contextMenu.style.display = 'block';
+            contextMenu.style.left = `${e.clientX}px`;
+            contextMenu.style.top = `${e.clientY}px`;
+        }
+    });
+
+    // Hide context menu on click
+    document.addEventListener('click', () => {
+        contextMenu.style.display = 'none';
+    });
+
+    // Handle context menu actions
+    contextMenu.addEventListener('click', (e) => {
+        const item = e.target.closest('.context-menu-item');
+        if (!item) return;
+
+        const action = item.dataset.action;
+        
+        switch(action) {
+            case 'refresh':
+                location.reload();
+                break;
+            case 'about':
+                openWindow('about');
+                break;
+            case 'terminal':
+                openWindow('terminal');
+                break;
+            case 'settings':
+                showNotification('Settings feature coming soon!', 'info');
+                break;
+        }
+    });
+}
+
+// Initialize calculator
+function initializeCalculator() {
+    const display = document.getElementById('calcDisplay');
+    const buttons = document.querySelectorAll('.calc-btn');
+    
+    let currentValue = '0';
+    let previousValue = '';
+    let operation = null;
+    let shouldResetDisplay = false;
+
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const value = button.dataset.value;
+
+            if (!isNaN(value) || value === '.') {
+                handleNumber(value);
+            } else if (value === 'C') {
+                clear();
+            } else if (value === '±') {
+                toggleSign();
+            } else if (value === '%') {
+                percentage();
+            } else if (['+', '-', '*', '/'].includes(value)) {
+                handleOperation(value);
+            } else if (value === '=') {
+                calculate();
+            }
+
+            updateDisplay();
+        });
+    });
+
+    function handleNumber(num) {
+        if (shouldResetDisplay) {
+            currentValue = num === '.' ? '0.' : num;
+            shouldResetDisplay = false;
+        } else {
+            if (num === '.' && currentValue.includes('.')) return;
+            currentValue = currentValue === '0' ? num : currentValue + num;
+        }
+    }
+
+    function clear() {
+        currentValue = '0';
+        previousValue = '';
+        operation = null;
+        shouldResetDisplay = false;
+    }
+
+    function toggleSign() {
+        currentValue = String(parseFloat(currentValue) * -1);
+    }
+
+    function percentage() {
+        currentValue = String(parseFloat(currentValue) / 100);
+    }
+
+    function handleOperation(op) {
+        if (operation !== null) {
+            calculate();
+        }
+        previousValue = currentValue;
+        operation = op;
+        shouldResetDisplay = true;
+    }
+
+    function calculate() {
+        if (operation === null || shouldResetDisplay) return;
+
+        const prev = parseFloat(previousValue);
+        const current = parseFloat(currentValue);
+        let result = 0;
+
+        switch (operation) {
+            case '+':
+                result = prev + current;
+                break;
+            case '-':
+                result = prev - current;
+                break;
+            case '*':
+                result = prev * current;
+                break;
+            case '/':
+                result = current !== 0 ? prev / current : 'Error';
+                break;
+        }
+
+        currentValue = String(result);
+        operation = null;
+        previousValue = '';
+        shouldResetDisplay = true;
+    }
+
+    function updateDisplay() {
+        display.textContent = currentValue;
+    }
+
+    // Keyboard support for calculator
+    document.addEventListener('keydown', (e) => {
+        const calcWindow = document.getElementById('calculator-window');
+        if (!calcWindow.classList.contains('active')) return;
+
+        const key = e.key;
+        
+        if (!isNaN(key) || key === '.') {
+            handleNumber(key);
+        } else if (key === 'Escape' || key === 'c' || key === 'C') {
+            clear();
+        } else if (key === 'Enter' || key === '=') {
+            calculate();
+        } else if (['+', '-', '*', '/'].includes(key)) {
+            handleOperation(key);
+        } else if (key === 'Backspace') {
+            currentValue = currentValue.slice(0, -1) || '0';
+        }
+
+        updateDisplay();
+    });
+}
+
+// Initialize settings
+function initializeSettings() {
+    const themeSelect = document.getElementById('themeSelect');
+    const wallpaperSelect = document.getElementById('wallpaperSelect');
+    const animationsToggle = document.getElementById('animationsToggle');
+    const glassToggle = document.getElementById('glassToggle');
+    const applyBtn = document.getElementById('applySettings');
+    const resetBtn = document.getElementById('resetSettings');
+
+    // Load saved settings
+    loadSettings();
+
+    // Theme colors
+    const themes = {
+        blue: { primary: '#0078d4', secondary: '#005a9e' },
+        purple: { primary: '#8b5cf6', secondary: '#6d28d9' },
+        green: { primary: '#10b981', secondary: '#059669' },
+        red: { primary: '#ef4444', secondary: '#dc2626' },
+        orange: { primary: '#f59e0b', secondary: '#d97706' }
+    };
+
+    // Wallpapers
+    const wallpapers = {
+        gradient1: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        gradient2: 'linear-gradient(135deg, #0093E9 0%, #80D0C7 100%)',
+        gradient3: 'linear-gradient(135deg, #FBDA61 0%, #FF5ACD 100%)',
+        gradient4: 'linear-gradient(135deg, #134E5E 0%, #71B280 100%)',
+        gradient5: 'linear-gradient(135deg, #000428 0%, #004e92 100%)'
+    };
+
+    applyBtn.addEventListener('click', () => {
+        const theme = themeSelect.value;
+        const wallpaper = wallpaperSelect.value;
+        const animations = animationsToggle.checked;
+        const glass = glassToggle.checked;
+
+        // Apply theme
+        document.documentElement.style.setProperty('--primary-color', themes[theme].primary);
+        document.documentElement.style.setProperty('--secondary-color', themes[theme].secondary);
+
+        // Apply wallpaper
+        document.querySelector('.wallpaper').style.background = wallpapers[wallpaper];
+
+        // Apply animations toggle
+        if (!animations) {
+            document.querySelectorAll('*').forEach(el => {
+                el.style.transition = 'none';
+            });
+        } else {
+            document.querySelectorAll('*').forEach(el => {
+                el.style.transition = '';
+            });
+        }
+
+        // Apply glass effect toggle
+        if (!glass) {
+            document.querySelectorAll('.window, .taskbar, .start-menu-panel').forEach(el => {
+                el.style.backdropFilter = 'none';
+                el.style.webkitBackdropFilter = 'none';
+            });
+        } else {
+            document.querySelectorAll('.window').forEach(el => {
+                el.style.backdropFilter = 'blur(20px)';
+                el.style.webkitBackdropFilter = 'blur(20px)';
+            });
+            document.querySelector('.taskbar').style.backdropFilter = 'blur(20px)';
+        }
+
+        // Save settings
+        const settings = { theme, wallpaper, animations, glass };
+        localStorage.setItem('shoaibos-settings', JSON.stringify(settings));
+
+        showNotification('Settings applied successfully!', 'success');
+    });
+
+    resetBtn.addEventListener('click', () => {
+        themeSelect.value = 'blue';
+        wallpaperSelect.value = 'gradient1';
+        animationsToggle.checked = true;
+        glassToggle.checked = true;
+        
+        localStorage.removeItem('shoaibos-settings');
+        showNotification('Settings reset to default', 'info');
+        
+        // Reload to apply defaults
+        setTimeout(() => location.reload(), 1000);
+    });
+
+    function loadSettings() {
+        const saved = localStorage.getItem('shoaibos-settings');
+        if (saved) {
+            const settings = JSON.parse(saved);
+            themeSelect.value = settings.theme || 'blue';
+            wallpaperSelect.value = settings.wallpaper || 'gradient1';
+            animationsToggle.checked = settings.animations !== false;
+            glassToggle.checked = settings.glass !== false;
+
+            // Auto-apply on load
+            setTimeout(() => {
+                applyBtn.click();
+            }, 100);
+        }
+    }
+}
 
 // Console Easter egg
 console.log('%c👾 Welcome to ShoaibOS!', 'font-size: 24px; color: #0078d4; font-weight: bold;');
