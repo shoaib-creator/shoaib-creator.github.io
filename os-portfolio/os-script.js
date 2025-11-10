@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeContextMenu();
     initializeCalculator();
     initializeSettings();
+    initializeFileExplorer();
 });
 
 // Initialize windows
@@ -90,41 +91,81 @@ function makeWindowDraggable(window) {
     let initialY;
     let snapIndicator = null;
 
-    header.addEventListener('mousedown', (e) => {
+    // Mouse events
+    header.addEventListener('mousedown', startDrag);
+    
+    // Touch events for mobile
+    header.addEventListener('touchstart', startDrag, { passive: false });
+
+    function startDrag(e) {
         if (e.target.closest('.window-controls')) return;
         if (window.classList.contains('maximized')) return;
 
+        // Check if it's a touch or mouse event
+        const isTouch = e.type === 'touchstart';
+        const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+        const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+
         isDragging = true;
-        initialX = e.clientX - (parseFloat(window.style.left) || 0);
-        initialY = e.clientY - (parseFloat(window.style.top) || 0);
+        initialX = clientX - (parseFloat(window.style.left) || 0);
+        initialY = clientY - (parseFloat(window.style.top) || 0);
 
         focusWindow(window);
-    });
+        
+        if (isTouch) {
+            e.preventDefault();
+        }
+    }
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', handleDrag);
+    document.addEventListener('touchmove', handleDrag, { passive: false });
+
+    function handleDrag(e) {
         if (!isDragging) return;
 
+        const isTouch = e.type === 'touchmove';
+        const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+        const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+
         e.preventDefault();
-        currentX = e.clientX - initialX;
-        currentY = e.clientY - initialY;
+        currentX = clientX - initialX;
+        currentY = clientY - initialY;
 
         window.style.left = `${currentX}px`;
         window.style.top = `${currentY}px`;
 
-        // Snap to edge preview
-        showSnapPreview(e, window);
-    });
+        // Snap to edge preview (only on non-touch devices)
+        if (!isTouch && !isMobile()) {
+            showSnapPreview({ clientX, clientY }, window);
+        }
+    }
 
-    document.addEventListener('mouseup', (e) => {
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchend', endDrag);
+
+    function endDrag(e) {
         if (isDragging) {
             isDragging = false;
-            applySnapToEdge(e, window);
-            removeSnapPreview();
+            const isTouch = e.type === 'touchend';
+            
+            if (!isTouch && !isMobile()) {
+                const lastTouch = e.changedTouches ? e.changedTouches[0] : e;
+                applySnapToEdge({ clientX: lastTouch.clientX, clientY: lastTouch.clientY }, window);
+                removeSnapPreview();
+            }
         }
-    });
+    }
 
-    // Make window resizable
-    makeWindowResizable(window);
+    // Make window resizable (disabled on mobile)
+    if (!isMobile()) {
+        makeWindowResizable(window);
+    }
+}
+
+// Check if device is mobile
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+        || window.innerWidth <= 768;
 }
 
 // Show snap preview
@@ -864,6 +905,10 @@ function initializeContextMenu() {
                 <i class="fas fa-terminal"></i>
                 <span>Open Terminal</span>
             </div>
+            <div class="context-menu-item" data-action="files">
+                <i class="fas fa-folder-open"></i>
+                <span>File Explorer</span>
+            </div>
             <div class="context-menu-divider"></div>
             <div class="context-menu-item" data-action="settings">
                 <i class="fas fa-cog"></i>
@@ -878,8 +923,22 @@ function initializeContextMenu() {
         if (e.target === desktop || e.target.classList.contains('wallpaper')) {
             e.preventDefault();
             contextMenu.style.display = 'block';
-            contextMenu.style.left = `${e.clientX}px`;
-            contextMenu.style.top = `${e.clientY}px`;
+            
+            // Position context menu, ensuring it stays within viewport
+            const menuWidth = 200;
+            const menuHeight = 250;
+            let posX = e.clientX;
+            let posY = e.clientY;
+            
+            if (posX + menuWidth > window.innerWidth) {
+                posX = window.innerWidth - menuWidth - 10;
+            }
+            if (posY + menuHeight > window.innerHeight) {
+                posY = window.innerHeight - menuHeight - 10;
+            }
+            
+            contextMenu.style.left = `${posX}px`;
+            contextMenu.style.top = `${posY}px`;
         }
     });
 
@@ -905,8 +964,11 @@ function initializeContextMenu() {
             case 'terminal':
                 openWindow('terminal');
                 break;
+            case 'files':
+                openWindow('files');
+                break;
             case 'settings':
-                showNotification('Settings feature coming soon!', 'info');
+                openWindow('settings');
                 break;
         }
     });
@@ -1135,6 +1197,194 @@ function initializeSettings() {
                 applyBtn.click();
             }, 100);
         }
+    }
+}
+
+// Initialize file explorer
+function initializeFileExplorer() {
+    const fileGrid = document.getElementById('fileGrid');
+    const filePath = document.getElementById('filePath');
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    
+    // File system structure
+    const fileSystem = {
+        '/home/shoaib': {
+            name: 'shoaib',
+            type: 'folder',
+            files: [
+                { name: 'Desktop', type: 'folder', icon: 'fas fa-desktop' },
+                { name: 'Documents', type: 'folder', icon: 'fas fa-file-alt' },
+                { name: 'Downloads', type: 'folder', icon: 'fas fa-download' },
+                { name: 'Projects', type: 'folder', icon: 'fas fa-code' },
+                { name: 'Pictures', type: 'folder', icon: 'fas fa-images' },
+                { name: 'Music', type: 'folder', icon: 'fas fa-music' },
+                { name: 'Videos', type: 'folder', icon: 'fas fa-video' }
+            ]
+        },
+        '/home/shoaib/Desktop': {
+            name: 'Desktop',
+            type: 'folder',
+            files: [
+                { name: 'About Me.lnk', type: 'link', icon: 'fas fa-user', target: 'about' },
+                { name: 'Skills.lnk', type: 'link', icon: 'fas fa-code', target: 'skills' },
+                { name: 'Projects.lnk', type: 'link', icon: 'fas fa-folder', target: 'projects' },
+                { name: 'Contact.lnk', type: 'link', icon: 'fas fa-envelope', target: 'contact' }
+            ]
+        },
+        '/home/shoaib/Documents': {
+            name: 'Documents',
+            type: 'folder',
+            files: [
+                { name: 'Resume.pdf', type: 'document', icon: 'fas fa-file-pdf' },
+                { name: 'Cover Letter.docx', type: 'document', icon: 'fas fa-file-word' },
+                { name: 'Certificates', type: 'folder', icon: 'fas fa-certificate' }
+            ]
+        },
+        '/home/shoaib/Downloads': {
+            name: 'Downloads',
+            type: 'folder',
+            files: [
+                { name: 'setup.exe', type: 'executable', icon: 'fas fa-cog' },
+                { name: 'photo.jpg', type: 'image', icon: 'fas fa-image' }
+            ]
+        },
+        '/home/shoaib/Projects': {
+            name: 'Projects',
+            type: 'folder',
+            files: [
+                { name: 'E-Commerce Platform', type: 'folder', icon: 'fas fa-shopping-cart' },
+                { name: 'Task Manager', type: 'folder', icon: 'fas fa-tasks' },
+                { name: 'Analytics Dashboard', type: 'folder', icon: 'fas fa-chart-line' },
+                { name: 'Blog Platform', type: 'folder', icon: 'fas fa-blog' },
+                { name: 'README.md', type: 'code', icon: 'fas fa-file-code' }
+            ]
+        },
+        '/home/shoaib/Pictures': {
+            name: 'Pictures',
+            type: 'folder',
+            files: [
+                { name: 'profile.jpg', type: 'image', icon: 'fas fa-image' },
+                { name: 'wallpapers', type: 'folder', icon: 'fas fa-images' },
+                { name: 'screenshots', type: 'folder', icon: 'fas fa-camera' }
+            ]
+        }
+    };
+
+    let currentPath = '/home/shoaib';
+    let pathHistory = ['/home/shoaib'];
+    let historyIndex = 0;
+
+    // Load initial directory
+    loadDirectory(currentPath);
+
+    // Navigation buttons
+    document.getElementById('backBtn').addEventListener('click', () => {
+        if (historyIndex > 0) {
+            historyIndex--;
+            currentPath = pathHistory[historyIndex];
+            loadDirectory(currentPath);
+            updateNavButtons();
+        }
+    });
+
+    document.getElementById('forwardBtn').addEventListener('click', () => {
+        if (historyIndex < pathHistory.length - 1) {
+            historyIndex++;
+            currentPath = pathHistory[historyIndex];
+            loadDirectory(currentPath);
+            updateNavButtons();
+        }
+    });
+
+    document.getElementById('upBtn').addEventListener('click', () => {
+        const parts = currentPath.split('/').filter(p => p);
+        if (parts.length > 1) {
+            parts.pop();
+            navigateTo('/' + parts.join('/'));
+        }
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+        loadDirectory(currentPath);
+    });
+
+    // Sidebar navigation
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const path = item.dataset.path;
+            if (path) {
+                sidebarItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                navigateTo(path);
+            }
+        });
+    });
+
+    function navigateTo(path) {
+        currentPath = path;
+        // Update history
+        if (historyIndex < pathHistory.length - 1) {
+            pathHistory = pathHistory.slice(0, historyIndex + 1);
+        }
+        pathHistory.push(path);
+        historyIndex = pathHistory.length - 1;
+        loadDirectory(path);
+        updateNavButtons();
+    }
+
+    function loadDirectory(path) {
+        const dir = fileSystem[path];
+        if (!dir) {
+            showNotification('Directory not found', 'error');
+            return;
+        }
+
+        // Update path display
+        filePath.querySelector('span').textContent = path;
+
+        // Clear grid
+        fileGrid.innerHTML = '';
+
+        // Add files
+        dir.files.forEach(file => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <div class="file-icon ${file.type}">
+                    <i class="${file.icon}"></i>
+                </div>
+                <div class="file-name">${file.name}</div>
+            `;
+
+            // Handle double-click
+            fileItem.addEventListener('dblclick', () => {
+                if (file.type === 'folder') {
+                    navigateTo(`${path}/${file.name}`);
+                } else if (file.type === 'link' && file.target) {
+                    openWindow(file.target);
+                    showNotification(`Opening ${file.name}`, 'info');
+                } else {
+                    showNotification(`Opening ${file.name}...`, 'info');
+                }
+            });
+
+            // Handle single-click selection
+            fileItem.addEventListener('click', (e) => {
+                if (!e.detail || e.detail === 1) {
+                    document.querySelectorAll('.file-item').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                    fileItem.classList.add('selected');
+                }
+            });
+
+            fileGrid.appendChild(fileItem);
+        });
+    }
+
+    function updateNavButtons() {
+        document.getElementById('backBtn').disabled = historyIndex === 0;
+        document.getElementById('forwardBtn').disabled = historyIndex === pathHistory.length - 1;
     }
 }
 
