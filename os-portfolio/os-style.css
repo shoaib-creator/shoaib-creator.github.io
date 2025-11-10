@@ -902,6 +902,182 @@ body {
     background: var(--secondary-color);
 }
 
+/* File Explorer Window */
+.files-window {
+    min-width: 700px !important;
+}
+
+.files-content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--window-bg);
+}
+
+.file-explorer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.file-nav {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.nav-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.file-path {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+.file-path i {
+    color: var(--primary-color);
+}
+
+.file-explorer {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+}
+
+.file-nav + .file-explorer > * {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+}
+
+.file-sidebar {
+    background: rgba(0, 0, 0, 0.2);
+    border-right: 1px solid var(--border-color);
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.sidebar-section {
+    margin-bottom: 20px;
+}
+
+.sidebar-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    font-weight: 600;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+    color: var(--text-secondary);
+}
+
+.sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-item.active {
+    background: rgba(0, 120, 212, 0.2);
+    color: var(--text-color);
+}
+
+.sidebar-item i {
+    color: var(--primary-color);
+    font-size: 16px;
+    width: 20px;
+}
+
+.file-main {
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+}
+
+.file-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: center;
+}
+
+.file-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.file-item.selected {
+    background: rgba(0, 120, 212, 0.2);
+}
+
+.file-icon {
+    font-size: 48px;
+    margin-bottom: 8px;
+}
+
+.file-icon.folder {
+    color: #fbbf24;
+}
+
+.file-icon.document {
+    color: #60a5fa;
+}
+
+.file-icon.image {
+    color: #a78bfa;
+}
+
+.file-icon.code {
+    color: #34d399;
+}
+
+.file-name {
+    font-size: 13px;
+    color: var(--text-secondary);
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
 /* Taskbar */
 .taskbar {
     position: fixed;
@@ -1075,26 +1251,369 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
+    /* Desktop icons - vertical layout on mobile */
+    .desktop-icons {
+        grid-template-columns: repeat(3, 90px);
+        gap: 15px;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        justify-content: center;
+    }
+
+    .icon {
+        width: 90px;
+        padding: 8px;
+    }
+
+    .icon i {
+        font-size: 36px;
+    }
+
+    .icon span {
+        font-size: 12px;
+    }
+
+    /* Windows - better mobile sizing */
     .window {
-        min-width: 90vw;
-        width: 90vw !important;
-        height: 70vh !important;
+        min-width: 95vw !important;
+        width: 95vw !important;
+        height: auto !important;
+        max-height: 80vh !important;
+        top: 10px !important;
+        left: 50% !important;
+        transform: translateX(-50%);
+        border-radius: 8px;
+    }
+
+    .window.maximized {
+        width: 100% !important;
+        height: calc(100vh - var(--taskbar-height)) !important;
+        max-height: none !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none;
+    }
+
+    .window-header {
+        padding: 10px 12px;
+        cursor: default; /* Disable drag on mobile */
+    }
+
+    .window-title {
+        font-size: 13px;
+        gap: 8px;
+    }
+
+    .window-content {
+        padding: 15px;
+        max-height: calc(80vh - 60px);
+    }
+
+    .window-controls button {
+        width: 28px;
+        height: 28px;
+    }
+
+    /* Skills grid - single column */
+    .skills-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Contact layout - single column */
+    .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    /* Stats - single column */
+    .stats {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* Taskbar - mobile optimized */
+    .taskbar {
+        padding: 0 5px;
+        height: 50px;
+    }
+
+    .start-button {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .start-button span {
+        display: none; /* Hide text on mobile */
+    }
+
+    .start-button i {
+        font-size: 24px;
+    }
+
+    .taskbar-items {
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        margin-left: 5px;
+    }
+
+    .taskbar-items::-webkit-scrollbar {
+        display: none;
+    }
+
+    .taskbar-item {
+        padding: 6px 10px;
+        font-size: 13px;
+        min-width: fit-content;
+    }
+
+    .taskbar-item span {
+        max-width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .system-tray {
+        gap: 10px;
+    }
+
+    .tray-item {
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    .clock {
+        font-size: 12px;
+    }
+
+    /* Start menu - full width on mobile */
+    .start-menu-panel {
+        width: 100%;
+        left: 0;
+        border-radius: 8px 8px 0 0;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .start-menu-header {
+        padding: 15px;
+    }
+
+    .user-info i {
+        font-size: 40px;
+    }
+
+    .start-menu-item {
+        padding: 14px 16px;
+        font-size: 15px;
+    }
+
+    /* Projects - better mobile layout */
+    .project-item {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .project-icon {
+        min-width: auto;
+    }
+
+    /* Experience - mobile friendly */
+    .exp-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .exp-header h3 {
+        font-size: 16px;
+    }
+
+    .exp-date {
+        font-size: 13px;
+    }
+
+    /* Calculator - smaller on mobile */
+    .calculator-window {
+        min-width: 95vw !important;
+        max-width: 95vw !important;
+    }
+
+    .calculator-display {
+        font-size: 28px;
+        padding: 15px;
+        min-height: 60px;
+    }
+
+    .calc-btn {
+        padding: 15px;
+        font-size: 18px;
+    }
+
+    /* File Explorer - mobile optimized */
+    .files-window {
+        min-width: 95vw !important;
+    }
+
+    .file-nav {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .file-path {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 5px;
+    }
+
+    .file-path span {
+        font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .file-sidebar {
+        display: none; /* Hide sidebar on mobile */
+    }
+
+    .file-explorer > * {
+        grid-template-columns: 1fr !important;
+    }
+
+    .file-main {
+        padding: 10px;
+    }
+
+    .file-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 10px;
+    }
+
+    .file-item {
+        padding: 10px 5px;
+    }
+
+    .file-icon {
+        font-size: 36px;
+    }
+
+    .file-name {
+        font-size: 11px;
+    }
+
+    /* Terminal - mobile optimized */
+    .terminal-content {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .terminal-input {
+        font-size: 12px;
+    }
+
+    /* Settings - mobile friendly */
+    .settings-panel {
+        width: 100%;
+    }
+
+    .settings-actions {
+        flex-direction: column;
+    }
+
+    /* Disable window resizers on mobile */
+    .resizer {
+        display: none;
+    }
+
+    /* Boot screen - mobile optimized */
+    .boot-logo i {
+        font-size: 60px;
+    }
+
+    .boot-screen h1 {
+        font-size: 36px;
+    }
+
+    .boot-loader {
+        width: 250px;
+    }
+
+    /* Profile section - mobile optimized */
+    .profile-image i {
+        font-size: 80px;
+    }
+
+    .profile-section h2 {
+        font-size: 24px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+    }
+
+    /* About text - mobile friendly */
+    .about-text h3 {
+        font-size: 18px;
+    }
+
+    .about-text p {
+        font-size: 14px;
+    }
+
+    /* Context menu - better touch targets */
+    .context-menu-item {
+        padding: 14px 18px;
+        font-size: 15px;
+    }
+
+    /* Window switcher - hide on mobile */
+    .window-switcher {
+        display: none !important;
+    }
+}
+
+/* Tablet responsive */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .desktop-icons {
+        grid-template-columns: repeat(4, 100px);
+    }
+
+    .window {
+        min-width: 80vw;
     }
 
     .skills-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
     }
+}
 
-    .contact-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .stats {
-        grid-template-columns: 1fr;
-    }
-
+/* Small phones */
+@media (max-width: 375px) {
     .desktop-icons {
-        grid-template-columns: repeat(2, 100px);
+        grid-template-columns: repeat(2, 85px);
+        gap: 10px;
+    }
+
+    .icon {
+        width: 85px;
+    }
+
+    .icon i {
+        font-size: 32px;
+    }
+
+    .window-content {
+        padding: 12px;
+    }
+
+    .taskbar {
+        height: 48px;
     }
 }
 
